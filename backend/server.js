@@ -1,4 +1,4 @@
-// server.js
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -7,19 +7,18 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// middlewares
+
 app.use(cors());
 app.use(express.json());
 
-// connect to mongodb atlas
+
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Connected..."))
 .catch((err) => console.log(err));
 
-// schema
+
 const todoSchema = new mongoose.Schema({
   text: String,
-  completed: { type: Boolean, default: false }
 });
 
 // model
@@ -42,7 +41,6 @@ app.post("/todos", async (req, res) => {
 app.put("/todos/:id", async (req, res) => {
   const todo = await Todo.findByIdAndUpdate(
     req.params.id,
-    { completed: req.body.completed },
     { new: true }
   );
   res.json(todo);
