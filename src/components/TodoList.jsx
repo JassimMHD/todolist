@@ -1,32 +1,79 @@
 import { useState, useEffect } from "react";
 
 const TodoList = () => {
-  const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem("todos");
-    return saved ? JSON.parse(saved) : [];
-  });
-
+  const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [editIndex, setEditIndex] = useState(null);
   const [editValue, setEditValue] = useState("");
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+    fetch("http://localhost:5000/todos")
+    .then(res => res.json())
+    .then(data => setTodos(data))
+    .catch(err => console.log(err));
+  }, []);
 
   const handleInputChange = (event) => setInputValue(event.target.value);
+  
+  
+  
+  
   const handleAdd = () => {
-    if (inputValue.trim() === "") return;
-    setTodos(prev => [...prev, inputValue]);
-    setInputValue("");
+    fetch("http://localhost:5000/todos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: inputValue })
+  })
+    .then(res => res.json())
+    .then(newTodo => {
+      setTodos([...todos, newTodo]);
+      setInputValue("");
+    })
+    .catch(err => console.log(err));
   };
-  const handleDelete = (index) => setTodos(todos.filter((_, i) => i !== index));
-  const handleEdit = (index) => { setEditIndex(index); setEditValue(todos[index]); };
-  const handleSave = () => { 
-    setTodos(todos.map((todo, i) => i === editIndex ? editValue : todo));
-    setEditIndex(null);
-    setEditValue("");
-  };
+
+
+
+
+const handleDelete = (id) => {
+  fetch(`http://localhost:5000/todos/${id}`, { method: "DELETE" })
+    .then(() => {
+      setTodos(todos.filter(todo => todo._id !== id));
+    })
+    .catch(err => console.log(err));
+};
+  
+  
+  
+  
+  
+  const handleEdit = (id, currentText) => {
+  setEditIndex(id);
+  setEditValue(currentText);
+};
+  
+  
+  
+  
+  
+  const handleSave = () => {
+  fetch(`http://localhost:5000/todos/${editIndex}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ completed: false, text: editValue }) // we allow updating text too
+  })
+    .then(res => res.json())
+    .then(updatedTodo => {
+      setTodos(todos.map(todo => todo._id === updatedTodo._id ? updatedTodo : todo));
+      setEditIndex(null);
+      setEditValue("");
+    })
+    .catch(err => console.log(err));
+};
+  
+  
+  
+  
   const handleCancel = () => { setEditIndex(null); setEditValue(""); };
 
   return (
@@ -50,9 +97,9 @@ const TodoList = () => {
       </div>
 
       <ul className="space-y-3">
-        {todos.map((todo, index) => (
-          <div key={index} className="flex gap-3 items-center">
-            {editIndex === index ? (
+        {todos.map((todo) => (
+          <div key={todo._id} className="flex gap-3 items-center">
+            {editIndex === todo._id ? (
               <>
                 <input
                   type="text"
@@ -77,18 +124,18 @@ const TodoList = () => {
               <>
                 <input
                   type="text"
-                  value={todo}
+                  value={todo.text}
                   disabled
                   className="flex-1 px-3 py-2 border  border-gray-600 bg-gray-100 text-gray-700"
                 />
                 <button
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(todo._id)}
                   className="px-3 py-1 bg-teal-600 text-white  "
                 >
                   Delete
                 </button>
                 <button
-                  onClick={() => handleEdit(index)}
+                  onClick={() => handleEdit(todo._id, todo.text)}
                   className="px-3 py-1 bg-teal-600 text-white  "
                 >
                   Edit
