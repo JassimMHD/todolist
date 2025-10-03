@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 export default function Signup({ onSignup }) {
@@ -25,36 +24,39 @@ export default function Signup({ onSignup }) {
 
   return (
     <div className="w-80 p-6 mx-auto mt-20">
-  <h2 className="text-2xl text-center mb-4">Signup</h2>
+      <h2 className="text-2xl text-center mb-4">Signup</h2>
+      <form onSubmit={submit}>
+        <input
+          className="w-full p-2 mb-3 border border-gray-300"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          type="text"
+          required
+        />
 
-  <input
-    className="w-full p-2 mb-3 border border-gray-300"
-    placeholder="Name"
-    value={name}
-    onChange={(e) => setName(e.target.value)}
-  />
+        <input
+          className="w-full p-2 mb-3 border border-gray-300"
+          placeholder="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-  <input
-    className="w-full p-2 mb-3 border border-gray-300"
-    placeholder="Email"
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-  />
+        <input
+          className="w-full p-2 mb-4 border border-gray-300"
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-  <input
-    className="w-full p-2 mb-4 border border-gray-300"
-    placeholder="Password"
-    type="password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-  />
-
-  <button
-    className="w-full bg-gray-600 text-white py-2"
-    onClick={submit}
-  >
-    Signup
-  </button>
-</div>
+        <button className="w-full bg-gray-600 text-white py-2" type="submit">
+          Signup
+        </button>
+      </form>
+    </div>
   );
 }
