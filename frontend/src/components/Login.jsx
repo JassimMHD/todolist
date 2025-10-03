@@ -25,8 +25,10 @@ const Login = ({ onLogin }) => {
       <input
         className="w-full p-2 mb-3 border border-gray-300 "
         placeholder="Email"
+        type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        required
       />
       <input
         className="w-full p-2 mb-4 border border-gray-300"
